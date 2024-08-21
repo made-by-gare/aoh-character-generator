@@ -1,5 +1,7 @@
 type ClassType = {
   name: string;
+  weaponRoll?: (hasScroll: boolean) => number;
+  armorRoll?: (hasScroll: boolean) => number;
   possibleOrigins?: string[];
 };
 
@@ -49,11 +51,66 @@ const alchemist: ClassType = {
 
 const classTypes: ClassType[] = [seeker, mountaineer, alchemist, offspring];
 
+const rollDice = (sides: number) => Math.floor(Math.random() * sides) + 1;
+
+const weapons: { [key: number]: string } = {
+  1: `Femur`,
+  2: `Staff`,
+  3: `Shortsword`,
+  4: `Knife`,
+  5: `Warhammer`,
+  6: `Sword`,
+  7: `Bow`,
+  8: `Flail`,
+  9: `Crossbow`,
+  10: `Zweihänder`,
+};
+
+const armors: { [key: number]: string } = {
+  1: `No Armor (tier 0)`,
+  2: `Light Armor (fur, padded cloth, leather, −d2 damage, tier 1)`,
+  3: `Medium Armor (scale, mail, −d4 damage, tier 2) dR +2 on Agility tests including defence.`,
+  4: `Heavy Armor`,
+};
+
+const defaultWeaponRoll = (hasScroll: boolean) => {
+  if (hasScroll) {
+    return rollDice(6);
+  }
+  return rollDice(10);
+};
+
+const defaultArmorRoll = (hasScroll: boolean) => {
+  if (hasScroll) {
+    return rollDice(2);
+  }
+  return rollDice(4);
+};
+
 export const RandomClass = () => {
   const c = classTypes[Math.floor(Math.random() * classTypes.length)];
+
+  let hasScroll = false;
+
+  const weaponRoll = c.weaponRoll
+    ? c.weaponRoll(hasScroll)
+    : defaultWeaponRoll(hasScroll);
+
+  const armorRoll = c.armorRoll
+    ? c.armorRoll(hasScroll)
+    : defaultArmorRoll(hasScroll);
+
   return (
-    <p>
-      <b>Class:</b> {c.name}
+    <>
+      <p>
+        <b>Class:</b> {c.name}
+      </p>
+      <p>
+        <b>Weapon:</b> {weapons[weaponRoll]}
+      </p>
+      <p>
+        <b>Armor:</b> {armors[armorRoll]}
+      </p>
       {c.possibleOrigins && (
         <p className="mt-10">
           <b>Origin:</b>{" "}
@@ -64,6 +121,6 @@ export const RandomClass = () => {
           }
         </p>
       )}
-    </p>
+    </>
   );
 };
