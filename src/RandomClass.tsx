@@ -66,10 +66,19 @@ const weapons: { [key: number]: string } = {
   10: `Zweihänder`,
 };
 
-const armors: { [key: number]: string } = {
+const lightArmors = ["fur", "padded cloth", "leather"];
+const mediumArmors = ["scale", "mail"];
+
+const armors: { [key: number]: string | (() => string) } = {
   1: `No Armor (tier 0)`,
-  2: `Light Armor (fur, padded cloth, leather, −d2 damage, tier 1)`,
-  3: `Medium Armor (scale, mail, −d4 damage, tier 2) dR +2 on Agility tests including defence.`,
+  2: () =>
+    `Light Armor (${
+      lightArmors[Math.floor(Math.random() * lightArmors.length)]
+    }, −d2 damage, tier 1)`,
+  3: () =>
+    `Medium Armor (${
+      mediumArmors[Math.floor(Math.random() * mediumArmors.length)]
+    }, −d4 damage, tier 2) dR +2 on Agility tests including defence.`,
   4: `Heavy Armor`,
 };
 
@@ -100,6 +109,14 @@ export const RandomClass = () => {
     ? c.armorRoll(hasScroll)
     : defaultArmorRoll(hasScroll);
 
+  const armor: string = (() => {
+    const armor = armors[armorRoll];
+    if (typeof armor === "function") {
+      return armor();
+    }
+    return armor;
+  })();
+
   return (
     <>
       <p>
@@ -109,7 +126,7 @@ export const RandomClass = () => {
         <b>Weapon:</b> {weapons[weaponRoll]}
       </p>
       <p>
-        <b>Armor:</b> {armors[armorRoll]}
+        <b>Armor:</b> {armor}
       </p>
       {c.possibleOrigins && (
         <p className="mt-10">
