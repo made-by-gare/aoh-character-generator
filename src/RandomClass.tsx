@@ -255,7 +255,111 @@ const alchemist: ClassType = {
   ],
 };
 
-const classTypes: ClassType[] = [seeker, mountaineer, alchemist, offspring];
+const schoolsOfThought = [
+  {
+    name: "Libertinism",
+    text: "−1 DR to all tests while drunken or debauched, ale heals +1 HP per pint",
+  },
+  {
+    name: "Self-control",
+    text: "−1 DR to all Presence tests for as long as you resist caffeine, alcohol, or any other such crude substance",
+  },
+];
+
+const modus = [
+  {
+    name: "Incite chaos",
+    text: `speak out against the monarchy, church, or any hegemony of preference and test Presence DR12 to cause any group, not including PCs, to d4: 1 — riot, 2 — brawl, 3 — loot, 4 — revolt.`,
+  },
+  {
+    name: "Assimilation",
+    text: `expend one pamphlet and test Presence DR13 to convert anyone or anything to the cause; enemies are converted if they fail a morale check.`,
+  },
+  {
+    name: "Makeshift explosives",
+    text: `once per day, craft an explosive seemingly from nowhere, d4 for effect: 1 — creates a flash, stunning everyone in eyesight for one round, 2 — sets one target on fire, dealing d4 damage each round until put out, 3 — set an explosive trap dealing d10 damage when triggered, 4 — Big One, deals d10 damage to everyone in the room regardless of size or cover.`,
+  },
+  {
+    name: "Pugnacious",
+    text: `−2 DR to all tests when insulting or injuring police or other formal authority figures`,
+  },
+];
+
+const enlightenment = [
+  () =>
+    `Born in an age unbefitting your spirit, you yearn for the liberation that all enjoyed before the dawn of civilization and systems of power.`,
+  () =>
+    `The fools who hold power are shortsighted and obsessed with controlling not only the youth but the universe itself; parents are for the weak.`,
+  () =>
+    `Just as you observed your parent waste their life away in the ${selectManyRandom(
+      ["quarry", "mill", "brickyard", "factory"],
+      1
+    )}, you saw your best years swallowed by the same demon; now, no more!`,
+  () =>
+    `Your thirst for knowledge is unquenchable. Having read every book in your family library, your awakening came when you first read of the dialectic struggle between the oppressor and the oppressed; all need to be made aware of this liberatory philosophy of spirit!`,
+  () =>
+    `Awakened nightly by ghosts, unreality beckons; the world and its edges are merely tools for exerting power over others! Existence is the chain by which we bond and subjugate will.`,
+  () =>
+    `Born in the debauched ballrooms of the elite, your sensorial hedonism sparked a relentless rejection of any and all social norms.`,
+];
+
+const anarchist: ClassType = {
+  name: "Anarchist",
+  weaponRoll: (hasScroll: boolean) => {
+    if (hasScroll) {
+      return rollDice(6);
+    }
+    return rollDice(8) + 2;
+  },
+  getStrength: () => abilityPoints[rollDice(20)],
+  getPresense: () => abilityPoints[rollDice(20)],
+  getAgility: () => abilityPoints[rollDice(20)],
+  getToughness: () => abilityPoints[rollDice(20)],
+  getSilver: () => rollDice(10),
+  getOmens: () => rollDice(6),
+  getHP: () => rollDice(10),
+
+  getClassAttributes() {
+    const school =
+      schoolsOfThought[Math.floor(Math.random() * schoolsOfThought.length)];
+    const modus_ = modus[Math.floor(Math.random() * modus.length)];
+    const enlightenment_ =
+      enlightenment[Math.floor(Math.random() * enlightenment.length)]();
+
+    return [
+      <>
+        <b>School of Thought:</b> <code>{school.name}</code>
+        <div className="ms-5">
+          <small>{school.text}</small>
+        </div>
+        <b>Modus:</b> <code>{modus_.name}</code>
+        <div className="ms-5">
+          <small>{modus_.text}</small>
+        </div>
+        <b>Enlightenment:</b>
+        <div className="ms-5">
+          <small>{enlightenment_}</small>
+        </div>
+      </>,
+    ];
+  },
+  getClassEquipment() {
+    return [
+      <code>crowbar (d4)</code>,
+      <code>
+        {rollDice(20)} pamphlets extolling the virtues of organized anarchism
+      </code>,
+    ];
+  },
+};
+
+const classTypes: ClassType[] = [
+  seeker,
+  mountaineer,
+  alchemist,
+  offspring,
+  anarchist,
+];
 
 const rollDice = (sides: number) => Math.floor(Math.random() * sides) + 1;
 
