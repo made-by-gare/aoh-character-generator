@@ -1,4 +1,5 @@
 import { ReactElement } from "react";
+import { selectManyRandom } from "./selectManyRandom";
 
 type ClassType = {
   name: string;
@@ -13,6 +14,7 @@ type ClassType = {
   getOmens: () => number;
   getHP: () => number;
 
+  getClassEquipment?: () => ReactElement[];
   getClassAttributes?: () => ReactElement[];
 };
 
@@ -39,6 +41,15 @@ const abilityPoints: { [key: number]: number } = {
   20: 3,
 };
 
+const dieties = [
+  { name: "God of Midnight", power: "The Blasted Tower" },
+  { name: "Baphomet", power: "Solve et Coagula" },
+  { name: "Pan", power: "Annihilation Song" },
+  { name: "Mother of Abominations", power: "Ten Million Spheres" },
+  { name: "The False God", power: "Executioner’s Faith" },
+  { name: "The Seven of Six", power: "Seven of 6" },
+];
+
 const seeker: ClassType = {
   name: "Seeker of the Left Hand Path",
   getStrength: () => abilityPoints[rollDice(6) + rollDice(6) + rollDice(6) - 2],
@@ -48,7 +59,15 @@ const seeker: ClassType = {
   getSilver: () => rollDice(20),
   getOmens: () => rollDice(4) + 1,
   getHP: () => rollDice(4),
+  getClassAttributes: () => {
+    const deity = dieties[Math.floor(Math.random() * dieties.length)];
 
+    return [
+      <>
+        Diety: <code>{deity.name}</code> Power: <code>{deity.power}</code>
+      </>,
+    ];
+  },
   possibleOrigins: [
     `Obsessed with reading, you alienated yourself from society in the pursuit of esoteric knowledge. Now society alienates you for your inability to communicate rationally.`,
     `Your parents kept you indoors during inclement weather but after your ferocious tantrums, the sky always seemed to clear. Villagers avoided you and whispered as you walked by.`,
@@ -58,6 +77,30 @@ const seeker: ClassType = {
     `You have somehow wiped your memory clean of the past. Consciousness is a disease and memory is a symptom. You never remember anything that happened yesterday.`,
   ],
 };
+
+const mountaineerSpecial = [
+  {
+    name: "Elasticity",
+    text: "You have broken and rebroken so many of your bones that you no longer concern yourself with pain. You are grotesquely flexible and can stretch your torso and appendages far beyond that of normal bodies. You can stretch your body [d4] feet.",
+  },
+  {
+    name: "Scansorial",
+    text: "Strangely thickened calluses allow you to grip and climb any surface DR6 or lower to all climbing checks.",
+  },
+  {
+    name: "Pranayama",
+    text: "In your high altitude meditations, you discovered that the body does not need to breathe.",
+  },
+  {
+    name: "Hardened",
+    text: "Your skin, muscles, and bones have hardened. Unarmed strikes deal d8 damage and you have natural light armor (-d2 to damage).",
+  },
+  { name: "Immunity", text: "You are immune to infections and poisons." },
+  {
+    name: "No Rest for the Wicked",
+    text: "You do not need to rest. You may heal as if you are resting any time you are not in combat.",
+  },
+];
 
 const mountaineer: ClassType = {
   name: "Mountaineer",
@@ -81,6 +124,28 @@ const mountaineer: ClassType = {
   getSilver: () => rollDice(10),
   getOmens: () => rollDice(4),
   getHP: () => rollDice(6),
+  getClassAttributes: () => {
+    const special =
+      mountaineerSpecial[Math.floor(Math.random() * mountaineerSpecial.length)];
+
+    return [
+      <>
+        Special: <code>{special.name}</code>
+        <div className="ms-5">
+          <small>{special.text}</small>
+        </div>
+      </>,
+    ];
+  },
+
+  getClassEquipment() {
+    return [
+      <>
+        <b>Choose 2:</b> <code>crampons</code>, <code>hatchet (d6)</code>,{" "}
+        <code>grappling hook</code>, <code>alpenstock (d8)</code>
+      </>,
+    ];
+  },
   possibleOrigins: [
     `You were abandoned in the wilderness as a child and raised yourself. It was not until your adolescence that you first met people.`,
     `Coming from wealth, you rejected the path set before you and instead chose to follow your luxurious hobby of mountain expeditions. While you maintained connection with your family and status enough to maintain a financial safety net, a disaster brought them and all their property to ruin.`,
@@ -92,6 +157,20 @@ const mountaineer: ClassType = {
 const panParts = ["Tail", "Horns", "Legs", "Head"];
 
 const panAnimals = ["Taurus", "Ass", "Sheep", "Muskox", "Antelope", "Goat"];
+const panScroll = "Annihilation Song";
+
+const panItems = [
+  <>
+    <code>Aulos</code>{" "}
+    <small>
+      playing these double reed pipes mesmerizes the target for the duration of
+      the song
+    </small>
+  </>,
+  <code>
+    {"Scroll:"} {panScroll}
+  </code>,
+];
 
 const offspring: ClassType = {
   name: "Offspring of Pan",
@@ -113,6 +192,9 @@ const offspring: ClassType = {
       </>,
     ];
   },
+  getClassEquipment() {
+    return [panItems[Math.floor(Math.random() * panItems.length)]];
+  },
   possibleOrigins: [
     `Mocked by the human children, you left home early with hate in your heart for the lesser species.`,
     `Having made every attempt to hide the resemblance to your father, you will cower in shame no longer.`,
@@ -122,6 +204,17 @@ const offspring: ClassType = {
     `A lonely child, you felt most at home with the livestock. Great was the JOY you felt when setting them free. You are compelled to free all livestock whether by destroying their worldly cages or releasing them from their corporeal prison`,
   ],
 };
+
+const alchemistPractices = [
+  "Fluently read and speak the Abyssal language of demons",
+  "Unparalleled astrological knowledge, +1 Omen if you observed the skies the night before",
+  "Your love for death left you well practiced in returning from the Abyss; if you perish, test Presence DR20 to rejoin soul and body, rising with 1 HP.",
+  "Slow and repeated exposure to poison boosted your immunity; suffer no damage from poisons.",
+  "Mercurial gift, begin with one occult treasure (p.xx).",
+  "Corpsecraft, you may bind together corpses sharing opposing traits to create a corpse golem with d4 HP.",
+  "Once per day, spend d4 hours on your work and transmute any one material into any other material. Does not work on the immaterial such as ghosts or fire.",
+  "Master of the elixir; once per day, test Presence DR16 to cause any liquid to become an undetectable, deadly single-dose poison or delectable healing cordial dealing d20 damage or restoring d20 HP upon consumption.",
+];
 
 const alchemist: ClassType = {
   name: "Alchemist",
@@ -133,6 +226,25 @@ const alchemist: ClassType = {
   getSilver: () => rollDice(666),
   getOmens: () => rollDice(4) + rollDice(4),
   getHP: () => rollDice(4),
+  getClassAttributes() {
+    const practices = selectManyRandom(alchemistPractices, 2);
+
+    return [
+      <>
+        <b>Practices:</b>
+        <ul className="list-disc">
+          {practices.map((p, i) => (
+            <li className="ms-10" key={i}>
+              <small>{p}</small>
+            </li>
+          ))}
+        </ul>
+      </>,
+    ];
+  },
+  getClassEquipment() {
+    return [<code>Alembic</code>, <code>Lute Putty</code>];
+  },
   possibleOrigins: [
     `Having spent your best years apprenticing with a master moron, you learned little to nothing except from stolen books and your own blasphemous experiments.`,
     `Those of culture and those below it found your eccentricities equally as repulsive and blasphemous; arrested on charges of consorting with devils, you escaped by poisoning the water supply of the whole simple-minded city, leaving you unattended for the weeks you needed to tunnel your way out of your cell.`,
@@ -184,7 +296,7 @@ const sacredScrolls = [
   "Enochian Syntax",
 ];
 
-const allScrolls = new Set([...uncleanScrolls, ...sacredScrolls]);
+const allScrolls = new Set([...uncleanScrolls, ...sacredScrolls, panScroll]);
 
 const itemPoolOne = [
   null,
@@ -330,9 +442,14 @@ export const RandomClass = () => {
     itemPoolThree[Math.floor(Math.random() * itemPoolThree.length)]
   );
 
+  if (c.getClassEquipment) {
+    equipment.push(...c.getClassEquipment());
+  }
+
   const evaledEquipment = equipment.filter(Boolean).map((e) => {
     const val: any = typeof e === "function" ? e(presense) : e;
 
+    console.log(val.props.children);
     // This is jank...
     if (allScrolls.has(val.props.children[2])) {
       hasScroll = true;

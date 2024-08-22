@@ -1,3 +1,5 @@
+import { selectManyRandom } from "./selectManyRandom";
+
 const traits = [
   `Endlessly Aggravated`,
   `Inferiority Complex`,
@@ -21,17 +23,6 @@ const traits = [
   `Arrogant`,
 ];
 
-const getTwoRandomTraits = () => {
-  const randomTraits: string[] = [];
-  while (randomTraits.length < 2) {
-    const trait = traits[Math.floor(Math.random() * traits.length)];
-    if (!randomTraits.includes(trait)) {
-      randomTraits.push(trait);
-    }
-  }
-  return randomTraits;
-};
-
 export function TerribleTraits() {
-  return <>{getTwoRandomTraits().join(", ")}</>;
+  return <>{selectManyRandom(traits, 2).join(", ")}</>;
 }
