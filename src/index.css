@@ -20,6 +20,12 @@
   }
 }
 
+code {
+  background-color: rgb(132, 0, 132);
+  color: white;
+  padding: 0.1em 0.2em;
+}
+
 body {
   margin: 0;
   margin-top: 20px;

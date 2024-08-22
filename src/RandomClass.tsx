@@ -1,12 +1,54 @@
+import { ReactElement } from "react";
+
 type ClassType = {
   name: string;
   weaponRoll?: (hasScroll: boolean) => number;
   armorRoll?: (hasScroll: boolean) => number;
   possibleOrigins?: string[];
+  getPresense: () => number;
+  getStrength: () => number;
+  getAgility: () => number;
+  getToughness: () => number;
+  getSilver: () => number;
+  getOmens: () => number;
+  getHP: () => number;
+
+  getClassAttributes?: () => ReactElement[];
+};
+
+const abilityPoints: { [key: number]: number } = {
+  1: -3,
+  2: -3,
+  3: -3,
+  4: -3,
+  5: -2,
+  6: -2,
+  7: -1,
+  8: -1,
+  9: 0,
+  10: 0,
+  11: 0,
+  12: 0,
+  13: 1,
+  14: 1,
+  15: 2,
+  16: 2,
+  17: 3,
+  18: 3,
+  19: 3,
+  20: 3,
 };
 
 const seeker: ClassType = {
   name: "Seeker of the Left Hand Path",
+  getStrength: () => abilityPoints[rollDice(6) + rollDice(6) + rollDice(6) - 2],
+  getPresense: () => abilityPoints[rollDice(6) + rollDice(6) + rollDice(6) + 2],
+  getAgility: () => abilityPoints[rollDice(6) + rollDice(6) + rollDice(6)],
+  getToughness: () => abilityPoints[rollDice(6) + rollDice(6) + rollDice(6)],
+  getSilver: () => rollDice(20),
+  getOmens: () => rollDice(4) + 1,
+  getHP: () => rollDice(4),
+
   possibleOrigins: [
     `Obsessed with reading, you alienated yourself from society in the pursuit of esoteric knowledge. Now society alienates you for your inability to communicate rationally.`,
     `Your parents kept you indoors during inclement weather but after your ferocious tantrums, the sky always seemed to clear. Villagers avoided you and whispered as you walked by.`,
@@ -19,6 +61,26 @@ const seeker: ClassType = {
 
 const mountaineer: ClassType = {
   name: "Mountaineer",
+
+  getStrength: () =>
+    abilityPoints[
+      rollDice(4) + rollDice(4) + rollDice(4) + rollDice(4) + rollDice(4)
+    ],
+  getPresense: () =>
+    abilityPoints[
+      rollDice(4) + rollDice(4) + rollDice(4) + rollDice(4) + rollDice(4)
+    ],
+  getAgility: () =>
+    abilityPoints[
+      rollDice(4) + rollDice(4) + rollDice(4) + rollDice(4) + rollDice(4)
+    ],
+  getToughness: () =>
+    abilityPoints[
+      rollDice(4) + rollDice(4) + rollDice(4) + rollDice(4) + rollDice(4)
+    ],
+  getSilver: () => rollDice(10),
+  getOmens: () => rollDice(4),
+  getHP: () => rollDice(6),
   possibleOrigins: [
     `You were abandoned in the wilderness as a child and raised yourself. It was not until your adolescence that you first met people.`,
     `Coming from wealth, you rejected the path set before you and instead chose to follow your luxurious hobby of mountain expeditions. While you maintained connection with your family and status enough to maintain a financial safety net, a disaster brought them and all their property to ruin.`,
@@ -27,8 +89,30 @@ const mountaineer: ClassType = {
   ],
 };
 
+const panParts = ["Tail", "Horns", "Legs", "Head"];
+
+const panAnimals = ["Taurus", "Ass", "Sheep", "Muskox", "Antelope", "Goat"];
+
 const offspring: ClassType = {
   name: "Offspring of Pan",
+  getStrength: () => abilityPoints[rollDice(6) + rollDice(6) + rollDice(6)],
+  getPresense: () => abilityPoints[rollDice(6) + rollDice(6) + rollDice(6) + 2],
+  getAgility: () => abilityPoints[rollDice(6) + rollDice(6) + rollDice(6)],
+  getToughness: () =>
+    abilityPoints[rollDice(6) + rollDice(6) + rollDice(6) - 2],
+  getSilver: () => rollDice(10),
+  getOmens: () => rollDice(4),
+  getHP: () => rollDice(8),
+  getClassAttributes: () => {
+    const animal = panAnimals[Math.floor(Math.random() * panAnimals.length)];
+    const part = panParts[Math.floor(Math.random() * panParts.length)];
+
+    return [
+      <>
+        <code>{part}</code> of <code>{animal}</code>
+      </>,
+    ];
+  },
   possibleOrigins: [
     `Mocked by the human children, you left home early with hate in your heart for the lesser species.`,
     `Having made every attempt to hide the resemblance to your father, you will cower in shame no longer.`,
@@ -41,6 +125,14 @@ const offspring: ClassType = {
 
 const alchemist: ClassType = {
   name: "Alchemist",
+  getStrength: () => abilityPoints[rollDice(4) + rollDice(4) + rollDice(4)],
+  getPresense: () =>
+    abilityPoints[rollDice(4) + rollDice(4) + rollDice(4) + rollDice(4) + 4],
+  getAgility: () => abilityPoints[rollDice(6) + rollDice(6) + rollDice(6)],
+  getToughness: () => abilityPoints[rollDice(6) + rollDice(6) + rollDice(6)],
+  getSilver: () => rollDice(666),
+  getOmens: () => rollDice(4) + rollDice(4),
+  getHP: () => rollDice(4),
   possibleOrigins: [
     `Having spent your best years apprenticing with a master moron, you learned little to nothing except from stolen books and your own blasphemous experiments.`,
     `Those of culture and those below it found your eccentricities equally as repulsive and blasphemous; arrested on charges of consorting with devils, you escaped by poisoning the water supply of the whole simple-minded city, leaving you unattended for the weeks you needed to tunnel your way out of your cell.`,
@@ -65,6 +157,126 @@ const weapons: { [key: number]: string } = {
   9: `Crossbow`,
   10: `Zweihänder`,
 };
+
+const uncleanScrolls = [
+  "Palms Open the Southern Gate",
+  "Tongue of Eris",
+  "Te-le-kin-esis",
+  "Lucy-fires Levitation",
+  "Daemon of Capillaries",
+  "Nine Violet Signs Unknot the Storm",
+  "Metzhuotl Blind Your Eye",
+  "Foul Psychompomp",
+  "Eyelid Blinds the Mind",
+  "Death",
+];
+
+const sacredScrolls = [
+  "Grace Of A Dead Saint",
+  "Grace For A Sinner",
+  "Whispers Pass The Gate",
+  "Aegis Of Sorrow",
+  "Unmet Fate",
+  "Bestial Speech",
+  "False Dawn/Night’S Chariot",
+  "Hermetic Step",
+  "Roskoe’S Consuming Glare",
+  "Enochian Syntax",
+];
+
+const allScrolls = new Set([...uncleanScrolls, ...sacredScrolls]);
+
+const itemPoolOne = [
+  null,
+  null,
+  <code>backpack for 7 normal-sized items</code>,
+  <code>sack for 10 normal-sized items</code>,
+  () => (
+    <>
+      <code>small wagon</code>
+      <small>
+        {" "}
+        (or <code>sack for 10 normal-size items</code> or{" "}
+        <code>backpack for 7 normal-sized items</code>){" "}
+      </small>
+    </>
+  ),
+  () => (
+    <>
+      <code>donkey, not bad.</code>
+      <small>
+        {" "}
+        (or <code>small wagon</code> or{" "}
+        <code>sack for 10 normal-size items</code> or{" "}
+        <code>backpack for 7 normal-sized items</code>)
+      </small>
+    </>
+  ),
+];
+
+const itemPoolTwo = [
+  <code>rope 30 feet</code>,
+  (presence: number) => <code>{presence + 4} torches</code>,
+  (presence: number) => <code>lantern with oil for {presence + 6} hours</code>,
+  <code>magnesium strip</code>,
+  () => (
+    <code>
+      Unclean Scroll:{" "}
+      {uncleanScrolls[Math.floor(Math.random() * uncleanScrolls.length)]}
+    </code>
+  ),
+  <code>sharp needle</code>,
+  (presence: number) => (
+    <code>
+      medicine chest {presence + 4} uses (stops bleeding/infection and heals d6
+      HP)
+    </code>
+  ),
+  <code>metal file and lockpicks</code>,
+  <code>bear trap (Presence DR14 to spot, d8 damage)</code>,
+  <code>bomb (sealed bottle, d10 damage)</code>,
+  () => (
+    <code>
+      a bottle of red poison {rollDice(4)} doses (Toughness DR12 or d10 damage)
+    </code>
+  ),
+  <code>silver crucifix</code>,
+];
+
+const itemPoolThree = [
+  () => (
+    <code>
+      life elixir {rollDice(4)} doses (heals d6 hp and removes infection)
+    </code>
+  ),
+  () => (
+    <code>
+      Sacred Scroll:{" "}
+      {sacredScrolls[Math.floor(Math.random() * sacredScrolls.length)]}
+    </code>
+  ),
+  () => (
+    <code>
+      small but vicious dog ({rollDice(6) + 2} hp, bite d4, only obeys you)
+    </code>
+  ),
+  () => (
+    <code>
+      {rollDice(4)} monkeys that ignore but love you ({rollDice(4) + 2} hp,
+      punch/bite d4)
+    </code>
+  ),
+  <code>exquisite perfume worth 25s</code>,
+  <code>toolbox 10 nails, tongs, hammer, small saw and drill</code>,
+  <code>heavy chain 15 feet</code>,
+  <code>grappling hook</code>,
+  <code>
+    shield (-1 hp damage or have the shield break to ignore one attack)
+  </code>,
+  <code>crowbar (d4 damage)</code>,
+  <code>lard (may function as 5 meals in a pinch)</code>,
+  <code>tent</code>,
+];
 
 const lightArmors = ["fur", "padded cloth", "leather"];
 const mediumArmors = ["scale", "mail"];
@@ -100,6 +312,33 @@ export const RandomClass = () => {
   const c = classTypes[Math.floor(Math.random() * classTypes.length)];
 
   let hasScroll = false;
+  const equipment = [];
+
+  const strength = c.getStrength();
+  const presense = c.getPresense();
+  const agility = c.getAgility();
+  const toughness = c.getToughness();
+  const silver = c.getSilver();
+  const omens = c.getOmens();
+  const hp = toughness + c.getHP();
+
+  const classAttributes = c.getClassAttributes ? c.getClassAttributes() : [];
+
+  equipment.push(itemPoolOne[Math.floor(Math.random() * itemPoolOne.length)]);
+  equipment.push(itemPoolTwo[Math.floor(Math.random() * itemPoolTwo.length)]);
+  equipment.push(
+    itemPoolThree[Math.floor(Math.random() * itemPoolThree.length)]
+  );
+
+  const evaledEquipment = equipment.filter(Boolean).map((e) => {
+    const val: any = typeof e === "function" ? e(presense) : e;
+
+    // This is jank...
+    if (allScrolls.has(val.props.children[2])) {
+      hasScroll = true;
+    }
+    return val;
+  });
 
   const weaponRoll = c.weaponRoll
     ? c.weaponRoll(hasScroll)
@@ -119,15 +358,59 @@ export const RandomClass = () => {
 
   return (
     <>
-      <p>
+      <div>
         <b>Class:</b> {c.name}
-      </p>
-      <p>
-        <b>Weapon:</b> {weapons[weaponRoll]}
-      </p>
-      <p>
-        <b>Armor:</b> {armor}
-      </p>
+        {classAttributes.map((a, i) => (
+          <div key={i} className="ms-5">
+            {a}
+          </div>
+        ))}
+      </div>
+
+      <b>Attributes</b>
+
+      <div className="mx-4 flex flex-row stretch justify-around">
+        <div>
+          Strength: <code>{strength}</code>
+        </div>
+        <div>
+          Presense: <code>{presense}</code>
+        </div>
+        <div>
+          Agility: <code>{agility}</code>
+        </div>
+      </div>
+      <div className="mx-4 flex flex-row stretch justify-around">
+        <div>
+          Toughness: <code>{toughness}</code>
+        </div>
+        <div>
+          HP: <code>{hp}</code>
+        </div>
+        <div>
+          Omens: <code>{omens}</code>
+        </div>
+      </div>
+      <div>
+        <b>Inventory:</b>
+        <small className="ms-5">Has Scroll: {hasScroll ? "Yes" : "No"}</small>
+        <ul className="list-disc">
+          <li className="ms-5">
+            <b>Weapon:</b> <code>{weapons[weaponRoll]}</code>
+          </li>
+          <li className="ms-5">
+            <b>Armor:</b> <code>{armor}</code>
+          </li>
+          <li className="ms-5">
+            <b>Silver:</b> <code>{silver}</code>
+          </li>
+          {evaledEquipment.map((e, i) => (
+            <li className="ms-5" key={i}>
+              {e}
+            </li>
+          ))}
+        </ul>
+      </div>
       {c.possibleOrigins && (
         <p className="mt-10">
           <b>Origin:</b>{" "}
