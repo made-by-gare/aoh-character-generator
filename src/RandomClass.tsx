@@ -218,6 +218,8 @@ const alchemistPractices = [
 
 const alchemist: ClassType = {
   name: "Alchemist",
+  armorRoll: (hasScroll: boolean) => rollDice(2),
+  weaponRoll: (hasScroll: boolean) => rollDice(4),
   getStrength: () => abilityPoints[rollDice(4) + rollDice(4) + rollDice(4)],
   getPresense: () =>
     abilityPoints[rollDice(4) + rollDice(4) + rollDice(4) + rollDice(4) + 4],
