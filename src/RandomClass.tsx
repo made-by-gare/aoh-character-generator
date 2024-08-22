@@ -353,12 +353,44 @@ const anarchist: ClassType = {
   },
 };
 
+const fool: ClassType = {
+  name: "The Pure Fool",
+  armorRoll: (hasScroll: boolean) => rollDice(1),
+  weaponRoll: (hasScroll: boolean) => rollDice(2),
+  getStrength: () => abilityPoints[rollDice(6) + rollDice(6) + rollDice(6)],
+  getPresense: () => -abilityPoints[rollDice(20)],
+  getAgility: () => abilityPoints[rollDice(6) + rollDice(6) + rollDice(6)],
+  getToughness: () => abilityPoints[rollDice(6) + rollDice(6) + rollDice(6)],
+
+  getSilver: () => rollDice(10),
+  getOmens: () => rollDice(6),
+  getHP: () => rollDice(6),
+
+  getClassEquipment() {
+    return [
+      <code>
+        a short length of rope that, no matter how it is knotted, comes easily
+        untied
+      </code>,
+    ];
+  },
+  possibleOrigins: [
+    `Knocked on the head during a theatrical performance, you can only remember your role as one of the old fishermen in the tragedy The Blind Eye That Weeps.`,
+    `Deemed criminally insane by the church before discovering the Abyss, you spent years honing your blasphemously odd sense of humor while chained to a dungeon wall.`,
+    `Once a person of propriety, you became unhinged and obsessed with hunting the Swan of Ecstasy.`,
+    `It was your life’s dream to be one of the great comedic performers. Your first venture into professional humor left the audience horrifically offended and violently aroused. They left you for dead — beaten to a pulp on a river bank.`,
+    `Having endured a life of poverty, you won a bet and were given a 10s-piece coin, though you were forced to swallow it as part of the wager, and now that you have found the true meaning of intrinsic wealth, you are free to seek extrinsic reward.`,
+    `Convinced since you were a child that you are one of the last great Sorcerers, suffer +1 DR to Presence tests when near any Seeker of the Left-Hand Path.  `,
+  ],
+};
+
 const classTypes: ClassType[] = [
   seeker,
   mountaineer,
   alchemist,
   offspring,
   anarchist,
+  fool,
 ];
 
 const rollDice = (sides: number) => Math.floor(Math.random() * sides) + 1;
