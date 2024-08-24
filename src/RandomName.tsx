@@ -108,9 +108,6 @@ export function RandomName() {
   const randomGivenName =
     givenName[Math.floor(Math.random() * givenName.length)];
   const randomSurname = surname[Math.floor(Math.random() * surname.length)];
-  return (
-    <>
-      {randomGivenName} {randomSurname}
-    </>
-  );
+
+  return <>{`${randomGivenName} ${randomSurname}`}</>;
 }

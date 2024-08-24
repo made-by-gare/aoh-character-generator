@@ -81,7 +81,10 @@ const seeker: ClassType = {
 const mountaineerSpecial = [
   {
     name: "Elasticity",
-    text: "You have broken and rebroken so many of your bones that you no longer concern yourself with pain. You are grotesquely flexible and can stretch your torso and appendages far beyond that of normal bodies. You can stretch your body [d4] feet.",
+    text: () =>
+      `You have broken and rebroken so many of your bones that you no longer concern yourself with pain. You are grotesquely flexible and can stretch your torso and appendages far beyond that of normal bodies. You can stretch your body ${rollDice(
+        4
+      )} feet.`,
   },
   {
     name: "Scansorial",
@@ -132,19 +135,20 @@ const mountaineer: ClassType = {
       <>
         Special: <code>{special.name}</code>
         <div className="ms-5">
-          <small>{special.text}</small>
+          <small>
+            {typeof special.text === "function" ? special.text() : special.text}
+          </small>
         </div>
       </>,
     ];
   },
 
   getClassEquipment() {
-    return [
-      <>
-        <b>Choose 2:</b> <code>crampons</code>, <code>hatchet (d6)</code>,{" "}
-        <code>grappling hook</code>, <code>alpenstock (d8)</code>
-      </>,
-    ];
+    const items = selectManyRandom(
+      ["crampons", "hatchet (d6)", "grappling hook", "alpenstock (d8)"],
+      2
+    );
+    return items.map((i) => <code>{i}</code>);
   },
   possibleOrigins: [
     `You were abandoned in the wilderness as a child and raised yourself. It was not until your adolescence that you first met people.`,
@@ -587,7 +591,6 @@ export const RandomClass = () => {
   const evaledEquipment = equipment.filter(Boolean).map((e) => {
     const val: any = typeof e === "function" ? e(presense) : e;
 
-    console.log(val.props.children);
     // This is jank...
     if (allScrolls.has(val.props.children[2])) {
       hasScroll = true;
